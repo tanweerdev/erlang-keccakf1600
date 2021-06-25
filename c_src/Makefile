@@ -47,6 +47,7 @@ endif
 export PLATFORM
 endif
 
+OTP_VERSION = $(shell erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().')
 # System type and C compiler/flags.
 
 ifeq ($(PLATFORM),msys2)
@@ -97,11 +98,15 @@ endif
 CFLAGS += -I"$(ERTS_INCLUDE_DIR)" -I"$(ERL_INTERFACE_INCLUDE_DIR)"
 CXXFLAGS += -I"$(ERTS_INCLUDE_DIR)" -I"$(ERL_INTERFACE_INCLUDE_DIR)"
 
-LDLIBS += -L"$(ERL_INTERFACE_LIB_DIR)" -lerl_interface -lei
+ifeq ($(OTP_VERSION),"24")
+    LDLIBS += -L"$(ERL_INTERFACE_LIB_DIR)" -lei
+else
+    LDLIBS += -L"$(ERL_INTERFACE_LIB_DIR)" -lerl_interface -lei
+endif
 
 # Dependencies.
 
-ALL_DEPS_OUTPUT ?= 
+ALL_DEPS_OUTPUT ?=
 
 # Verbosity.
 
